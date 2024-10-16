@@ -1,10 +1,10 @@
-package com.ortega.bankservices;
+package com.ortega.configserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BankServicesApplicationTests {
+class ConfigServerApplicationTests {
 
     @Test
     void contextLoads() {

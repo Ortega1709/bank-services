@@ -1,13 +1,13 @@
-package com.ortega.bankservices;
+package com.ortega.configserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BankServicesApplication {
+public class ConfigServerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BankServicesApplication.class, args);
+        SpringApplication.run(ConfigServerApplication.class, args);
     }
 
 }

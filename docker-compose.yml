@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17.0-alpine3.20
+    container_name: postgres-bank-service-db
+    environment:
+      POSTGRES_USER: bank
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
