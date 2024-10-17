@@ -1,21 +1,35 @@
 services:
   postgres:
     image: postgres:17.0-alpine3.20
-    container_name: postgres-bank-service-db
+    container_name: postgres-bank-services-db
     environment:
       POSTGRES_USER: bank
       POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
+      PGDATA: /data/postgres-bank-services-db-data
     volumes:
-      - postgres:/data/postgres
+      - postgres:/data/postgres-bank-services-db-data
     ports:
-      - "5432:5432"
+      - 5432:5432
     networks:
-      - postgres
+      - bank-services-network
+
+  mongodb:
+    image: mongo:noble
+    container_name: mongodb-bank-services-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: bank
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongodb:/data/mongodb-bank-services-db-data
+    ports:
+      - 27017:27017
+    networks:
+      - bank-services-network
 
 networks:
-  postgres:
+  bank-services-network:
     driver: bridge
 
 volumes:
   postgres:
+  mongodb:
