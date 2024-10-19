@@ -1,5 +1,6 @@
 package com.ortega.user.handler;
 
+import com.ortega.user.exception.AuthException;
 import com.ortega.user.exception.RoleNotFoundException;
 import com.ortega.user.exception.UserAlreadyExistsException;
 import com.ortega.user.exception.UserNotFoundException;
@@ -76,6 +77,17 @@ public class GlobalExceptionHandler {
                 .status("error")
                 .code(HttpStatus.BAD_REQUEST.value())
                 .message("Invalid argument")
+                .error(e.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(AuthException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleAuthException(AuthException e) {
+        return ErrorResponse.builder()
+                .status("error")
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message("Authentication error")
                 .error(e.getMessage())
                 .build();
     }

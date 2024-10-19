@@ -26,6 +26,19 @@ services:
     networks:
       - bank-services-network
 
+  axon-server:
+    image: axoniq/axonserver:latest-jdk-17-nonroot
+    container_name: axonserver-bank-services
+    environment:
+      AXONIQ_AXONSERVER_NAME: axonserver
+      AXONIQ_AXONSERVER_DEV_MODE: true
+    volumes:
+      - axonserver-data:/data/axonserver-bank-services-data
+      - axonserver-events:/data/axonserver-bank-services-eventsdata
+    ports:
+      - 8024:8024
+      - 8124:8124
+
 networks:
   bank-services-network:
     driver: bridge
@@ -33,3 +46,5 @@ networks:
 volumes:
   postgres:
   mongodb:
+  axonserver-data:
+  axonserver-events:

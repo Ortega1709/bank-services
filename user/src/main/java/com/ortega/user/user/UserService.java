@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -25,6 +26,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserDTO createUser(UserRequest request) {
         Set<Role> roles = getRolesByRoleIds(request.roleIds());
@@ -33,7 +35,7 @@ public class UserService {
                 .userId(request.userId())
                 .username(request.username())
                 .email(request.email())
-                .password(request.password())
+                .password(passwordEncoder.encode(request.password()))
                 .roles(roles)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -54,7 +56,7 @@ public class UserService {
                 .userId(request.userId())
                 .username(request.username())
                 .email(request.email())
-                .password(request.password())
+                .password(passwordEncoder.encode(request.password()))
                 .roles(roles)
                 .createdAt(userSaved.getCreatedAt())
                 .updatedAt(LocalDateTime.now())
