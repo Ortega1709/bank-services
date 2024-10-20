@@ -9,5 +9,9 @@ spring:
       ddl-auto: update
     show-sql: true
 
+axon:
+  axonserver:
+    servers: localhost:8124
+
 server:
   port: 8083
