@@ -4,14 +4,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
-    public User toUser(UserRequest userRequest) {
-        return null;
+
+
+    public User toUser(UserRequest request) {
+        if (request == null) return null;
+
+        return User.builder()
+                .userId(request.userId())
+                .email(request.email())
+                .username(request.username())
+                .build();
     }
 
     public UserDTO toDTO(User user) {
-        if (user == null) {
-            return null;
-        }
+        if (user == null) return null;
 
         return UserDTO.builder()
                 .userId(user.getUserId())

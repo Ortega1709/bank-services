@@ -31,36 +31,26 @@ public class UserService {
     public UserDTO createUser(UserRequest request) {
         Set<Role> roles = getRolesByRoleIds(request.roleIds());
 
-        User user = User.builder()
-                .userId(request.userId())
-                .username(request.username())
-                .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
-                .roles(roles)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
+        User user = userMapper.toUser(request);
+
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setRoles(roles);
 
         return userMapper.toDTO(userRepository.save(user));
     }
 
     public UserDTO updateUser(UserRequest request) {
-        User userSaved = userRepository.findById(request.userId()).orElseThrow(
+        userRepository.findById(request.userId()).orElseThrow(
                 () -> new UserNotFoundException(
                         String.format("User with id %s not found", request.userId())
                 )
         );
 
         Set<Role> roles = getRolesByRoleIds(request.roleIds());
-        User user = User.builder()
-                .userId(request.userId())
-                .username(request.username())
-                .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
-                .roles(roles)
-                .createdAt(userSaved.getCreatedAt())
-                .updatedAt(LocalDateTime.now())
-                .build();
+        User user = userMapper.toUser(request);
+
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setRoles(roles);
 
         return userMapper.toDTO(userRepository.save(user));
     }
