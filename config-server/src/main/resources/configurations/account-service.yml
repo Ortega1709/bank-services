@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    username: bank
+    password: password
+    url: jdbc:postgresql://localhost:5432/account
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+axon:
+  axonserver:
+    servers: localhost:8124
+    enabled: true
+
+server:
+  port: 8084
