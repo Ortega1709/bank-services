@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AccountKafkaListener {
 
+
     @KafkaListener(topics = "customer-created-topic", groupId = "account-group")
     public void listenCustomerCreatedEvent(String event) throws JsonProcessingException {
         log.info("Listening customer created event: {}", event);

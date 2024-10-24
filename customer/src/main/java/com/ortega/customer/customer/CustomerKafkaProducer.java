@@ -3,7 +3,6 @@ package com.ortega.customer.customer;
 import com.ortega.customer.event.customer.CustomerCreatedEvent;
 import com.ortega.customer.event.customer.CustomerDeletedEvent;
 import com.ortega.customer.event.customer.CustomerEvent;
-import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

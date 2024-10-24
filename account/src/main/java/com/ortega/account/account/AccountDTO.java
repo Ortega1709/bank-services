@@ -1,7 +1,8 @@
 package com.ortega.account.account;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -9,19 +10,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity(name = "account")
-public class Account {
+public class AccountDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID accountId;
     private UUID customerId;
     private String accountNumber;
-
-    @Column(length = 6)
-    private Integer pin;
     private BigDecimal balance;
     private Boolean status;
 

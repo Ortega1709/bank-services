@@ -1,18 +1,16 @@
 package com.ortega.account.event.account;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountCreatedEvent implements AccountEvent {
-    private String accountNumber;
-    private String fistName;
-    private String lastName;
-    private Integer pin;
+public class AccountCreationFailedEvent implements AccountEvent {
+    private UUID customerId;
 }

@@ -4,6 +4,7 @@ import com.ortega.customer.event.customer.CustomerCreatedEvent;
 import com.ortega.customer.event.customer.CustomerDeletedEvent;
 import com.ortega.customer.exception.CustomerAlreadyExistsException;
 import com.ortega.customer.exception.CustomerNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ public class CustomerService {
     private final CustomerKafkaProducer customerKafkaProducer;
     private final CustomerMapper customerMapper;
 
+    @Transactional
     public CustomerDTO createCustomer(CustomerRequest request) {
         if (customerRepository.existsByEmail(request.email())) {
             throw new CustomerAlreadyExistsException(
@@ -30,7 +32,7 @@ public class CustomerService {
         }
 
         Customer customer = customerMapper.toCustomer(request);
-        // customerRepository.saveAndFlush(customer);
+        customerRepository.saveAndFlush(customer);
 
         customerKafkaProducer.produceCustomerCreatedEvent(
                 new CustomerCreatedEvent(
