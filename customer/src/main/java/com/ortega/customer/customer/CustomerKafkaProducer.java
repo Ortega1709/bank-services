@@ -3,11 +3,15 @@ package com.ortega.customer.customer;
 import com.ortega.customer.event.customer.CustomerCreatedEvent;
 import com.ortega.customer.event.customer.CustomerDeletedEvent;
 import com.ortega.customer.event.customer.CustomerEvent;
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
+import static org.springframework.kafka.support.KafkaHeaders.TOPIC;
 
 
 @Slf4j
@@ -19,11 +23,23 @@ public class CustomerKafkaProducer {
 
     public void produceCustomerCreatedEvent(CustomerCreatedEvent event) {
         log.info("Producing customer created event: {}", event);
-        kafkaTemplate.send("customer-created-topic", event);
+
+        Message<CustomerCreatedEvent> customerCreatedMessage = MessageBuilder
+                .withPayload(event)
+                .setHeader(TOPIC, "customer-created-topic")
+                .build();
+
+        kafkaTemplate.send(customerCreatedMessage);
     }
 
     public void produceCustomerDeletedEvent(CustomerDeletedEvent event) {
         log.info("Producing customer deleted event: {}", event);
-        kafkaTemplate.send("customer-deleted-topic", event);
+
+        Message<CustomerDeletedEvent> customerCreatedMessage = MessageBuilder
+                .withPayload(event)
+                .setHeader(TOPIC, "customer-deleted-topic")
+                .build();
+
+        kafkaTemplate.send(customerCreatedMessage);
     }
 }

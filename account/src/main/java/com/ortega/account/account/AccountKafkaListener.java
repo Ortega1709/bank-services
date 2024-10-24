@@ -15,12 +15,18 @@ import org.springframework.stereotype.Service;
 public class AccountKafkaListener {
 
     @KafkaListener(topics = "customer-created-topic", groupId = "account-group")
-    private void listenCustomerCreatedEvent(CustomerCreatedEvent event) {
+    public void listenCustomerCreatedEvent(String event) throws JsonProcessingException {
         log.info("Listening customer created event: {}", event);
+
+        CustomerCreatedEvent customerCreatedEvent = new ObjectMapper()
+                .readValue(event, CustomerCreatedEvent.class);
     }
 
     @KafkaListener(topics = "customer-deleted-topic", groupId = "account-group")
-    private void listenCustomerDeletedEvent(CustomerDeletedEvent event) {
+    public void listenCustomerDeletedEvent(String event) throws JsonProcessingException {
         log.info("Listening customer deleted event: {}", event);
+
+        CustomerDeletedEvent customerDeletedEvent = new ObjectMapper()
+                .readValue(event, CustomerDeletedEvent.class);
     }
 }

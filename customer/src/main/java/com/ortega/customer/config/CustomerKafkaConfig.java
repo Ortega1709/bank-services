@@ -1,5 +1,7 @@
 package com.ortega.customer.config;
 
+import com.ortega.customer.event.account.AccountEvent;
+import com.ortega.customer.event.customer.CustomerEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -27,9 +29,22 @@ public class CustomerKafkaConfig {
     private String bootstrapServers;
 
     @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate() {
-        Map<String, Object> producerConfigs = new HashMap<>();
+    public KafkaTemplate<String, CustomerEvent> customerKafkaTemplate() {
+        return kafkaTemplate(CustomerEvent.class);
+    }
 
+    @Bean
+    public ConsumerFactory<String, AccountEvent> accountKafkaConsumerFactory() {
+        return consumerFactory("account-group", AccountEvent.class);
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, AccountEvent> customerEventKafkaListenerContainerFactory() {
+        return kafkaListenerContainerFactory(accountKafkaConsumerFactory());
+    }
+
+    private <T> KafkaTemplate<String, T> kafkaTemplate(Class<T> eventType) {
+        Map<String, Object> producerConfigs = new HashMap<>();
         producerConfigs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         producerConfigs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerConfigs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
@@ -37,25 +52,21 @@ public class CustomerKafkaConfig {
         return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(producerConfigs));
     }
 
-    @Bean
-    public ConsumerFactory<String, Object> consumerFactory() {
+    private <T> ConsumerFactory<String, T> consumerFactory(String groupId, Class<T> eventType) {
         Map<String, Object> consumerConfigs = new HashMap<>();
-
         consumerConfigs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        consumerConfigs.put(ConsumerConfig.GROUP_ID_CONFIG, "customer-group");
+        consumerConfigs.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         consumerConfigs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerConfigs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        consumerConfigs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         consumerConfigs.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs);
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs, new StringDeserializer(), new JsonDeserializer<>(eventType));
     }
 
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+    private <T> ConcurrentKafkaListenerContainerFactory<String, T> kafkaListenerContainerFactory(ConsumerFactory<String, T> consumerFactory) {
+        ConcurrentKafkaListenerContainerFactory<String, T> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory);
         return factory;
     }
+
 }
