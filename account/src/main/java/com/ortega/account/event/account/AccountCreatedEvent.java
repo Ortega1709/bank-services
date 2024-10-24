@@ -1,11 +1,9 @@
 package com.ortega.account.event.account;
 
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.AllArgsConstructor;
 
-@Data
-@Builder
+@AllArgsConstructor
 public class AccountCreatedEvent implements AccountEvent {
 
 }

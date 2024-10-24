@@ -1,6 +1,7 @@
 package com.ortega.customer.handler;
 
 import com.ortega.customer.exception.CustomerAlreadyExistsException;
+import com.ortega.customer.exception.CustomerNotFoundException;
 import com.ortega.customer.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -22,6 +23,17 @@ public class GlobalExceptionHandler {
                 .status("error")
                 .code(HttpStatus.NOT_FOUND.value())
                 .message("Customer already exists")
+                .error(e.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleCustomerNotFoundException(CustomerNotFoundException e) {
+        return ErrorResponse.builder()
+                .status("error")
+                .code(HttpStatus.NOT_FOUND.value())
+                .message("Customer not found")
                 .error(e.getMessage())
                 .build();
     }

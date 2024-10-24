@@ -1,5 +1,7 @@
 package com.ortega.account.account;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ortega.account.event.customer.CustomerCreatedEvent;
 import com.ortega.account.event.customer.CustomerDeletedEvent;
 import lombok.RequiredArgsConstructor;

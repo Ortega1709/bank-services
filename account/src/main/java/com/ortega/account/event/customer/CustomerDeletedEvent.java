@@ -1,12 +1,12 @@
 package com.ortega.account.event.customer;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
 
-@Data
-@Builder
+@AllArgsConstructor
 public class CustomerDeletedEvent implements CustomerEvent {
     private UUID customerId;
 }

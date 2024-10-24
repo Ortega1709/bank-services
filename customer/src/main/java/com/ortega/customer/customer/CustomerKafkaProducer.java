@@ -6,11 +6,8 @@ import com.ortega.customer.event.customer.CustomerEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
-import static org.springframework.kafka.support.KafkaHeaders.TOPIC;
 
 
 @Slf4j
@@ -22,23 +19,11 @@ public class CustomerKafkaProducer {
 
     public void produceCustomerCreatedEvent(CustomerCreatedEvent event) {
         log.info("Producing customer created event: {}", event);
-
-        Message<CustomerCreatedEvent> message = MessageBuilder
-                .withPayload(event)
-                .setHeader(TOPIC, "customer-created-topic")
-                .build();
-
-        kafkaTemplate.send(message);
+        kafkaTemplate.send("customer-created-topic", event);
     }
 
     public void produceCustomerDeletedEvent(CustomerDeletedEvent event) {
         log.info("Producing customer deleted event: {}", event);
-
-        Message<CustomerDeletedEvent> message = MessageBuilder
-                .withPayload(event)
-                .setHeader(TOPIC, "customer-deleted-topic")
-                .build();
-
-        kafkaTemplate.send(message);
+        kafkaTemplate.send("customer-deleted-topic", event);
     }
 }
