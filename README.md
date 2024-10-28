@@ -66,5 +66,5 @@ Avant de commencer, assurez-vous d'avoir installé les outils suivants :
 
 1. **Cloner le projet** :
    ```bash
-   git clone https://github.com/Ortega1709/bank-services.git
+   git clone https://github.com/ortega-kb/bank-services.git
    
