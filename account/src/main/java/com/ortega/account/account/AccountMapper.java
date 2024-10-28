@@ -9,11 +9,7 @@ public class AccountMapper {
         if (request == null) return null;
 
         return Account.builder()
-                .accountId(request.accountId())
-                .accountNumber(request.accountNumber())
                 .customerId(request.customerId())
-                .balance(request.balance())
-                .status(request.status())
                 .build();
     }
 
@@ -26,6 +22,7 @@ public class AccountMapper {
                 .customerId(account.getCustomerId())
                 .balance(account.getBalance())
                 .status(account.getStatus())
+                .pin(account.getPin())
                 .build();
     }
 }

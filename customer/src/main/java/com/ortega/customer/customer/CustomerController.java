@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.UUID;
 
 @RestController
@@ -19,7 +20,7 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SuccessResponse createCustomer(@RequestBody CustomerRequest request) {
+    public SuccessResponse createCustomer(@RequestBody CustomerRequest request) throws ParseException {
         CustomerDTO customerDTO = customerService.createCustomer(request);
         return SuccessResponse.builder()
                 .status("success")
@@ -31,7 +32,7 @@ public class CustomerController {
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public SuccessResponse updateCustomer(@RequestBody CustomerRequest request) {
+    public SuccessResponse updateCustomer(@RequestBody CustomerRequest request) throws ParseException {
         CustomerDTO customerDTO = customerService.updateCustomer(request);
         return SuccessResponse.builder()
                 .status("success")

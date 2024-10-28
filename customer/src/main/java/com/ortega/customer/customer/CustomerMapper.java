@@ -2,10 +2,14 @@ package com.ortega.customer.customer;
 
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+
 @Component
 public class CustomerMapper {
 
-    public Customer toCustomer(CustomerRequest request) {
+    public Customer toCustomer(CustomerRequest request) throws ParseException {
         if (request == null) return null;
 
         return Customer.builder()

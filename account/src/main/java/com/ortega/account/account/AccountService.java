@@ -7,54 +7,45 @@ import com.ortega.account.exception.AccountAlreadyExistsException;
 import com.ortega.account.exception.AccountNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
+import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountService {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
-    private final AccountKafkaProducer accountKafkaProducer;
 
     @Transactional
-    public AccountDTO createAccount(CustomerCreatedEvent event) {
-        try {
-            if (accountRepository.existsByCustomerId(event.getCustomerId())) {
-                throw new AccountAlreadyExistsException(
-                        String.format("Account with customer ID %s already exists", event.getCustomerId())
-                );
-            }
+    public AccountDTO createAccount(AccountRequest request) {
+        log.info("Creating account for customer :: {}", request.customerId());
 
-            Account account = Account.builder()
-                    .customerId(event.getCustomerId())
-                    .accountNumber(this.generateAccountNumber())
-                    .status(Boolean.TRUE)
-                    .build();
-
-            accountRepository.saveAndFlush(account);
-            accountKafkaProducer.produceAccountCreatedEvent(
-                    new AccountCreatedEvent(
-                            account.getAccountNumber(),
-                            event.getFirstName(),
-                            event.getLastName(),
-                            account.getPin()
-                    )
+        if (accountRepository.existsByCustomerId(request.customerId())) {
+            throw new AccountAlreadyExistsException(
+                    String.format("Account with customer ID %s already exists", request.customerId())
             );
-
-            return accountMapper.toDTO(account);
-        } catch (Exception e) {
-            accountKafkaProducer.produceAccountCreationFailedEvent(
-                    new AccountCreationFailedEvent(event.getCustomerId())
-            );
-            return null;
         }
+
+        Account account = Account.builder()
+                .customerId(request.customerId())
+                .accountNumber(this.generateAccountNumber())
+                .pin(this.generateRandomPin())
+                .balance(BigDecimal.ZERO)
+                .status(Boolean.TRUE)
+                .build();
+
+        accountRepository.saveAndFlush(account);
+        return accountMapper.toDTO(account);
     }
 
     public AccountDTO findByAccountNumber(String accountNumber) {
@@ -70,6 +61,12 @@ public class AccountService {
         return accountRepository.findAll(pageable).map(accountMapper::toDTO);
     }
 
+    @Transactional
+    public void deleteAccountByCustomerId(UUID customerId) {
+        log.info("Deleting account by customer id :: {}", customerId);
+
+        accountRepository.deleteByCustomerId(customerId);
+    }
 
     private String generateAccountNumber() {
         String accountPrefix = "ACC";

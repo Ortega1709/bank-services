@@ -33,15 +33,6 @@ public class CustomerKafkaConfig {
         return kafkaTemplate(CustomerEvent.class);
     }
 
-    @Bean
-    public ConsumerFactory<String, AccountEvent> accountKafkaConsumerFactory() {
-        return consumerFactory("account-group", AccountEvent.class);
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, AccountEvent> customerEventKafkaListenerContainerFactory() {
-        return kafkaListenerContainerFactory(accountKafkaConsumerFactory());
-    }
 
     private <T> KafkaTemplate<String, T> kafkaTemplate(Class<T> eventType) {
         Map<String, Object> producerConfigs = new HashMap<>();

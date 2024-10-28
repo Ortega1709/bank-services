@@ -1,5 +1,6 @@
 package com.ortega.customer.handler;
 
+import com.ortega.customer.exception.BusinessException;
 import com.ortega.customer.exception.CustomerAlreadyExistsException;
 import com.ortega.customer.exception.CustomerNotFoundException;
 import com.ortega.customer.response.ErrorResponse;
@@ -54,6 +55,27 @@ public class GlobalExceptionHandler {
                 .message("Invalid request")
                 .error("Fields are invalid")
                 .errors(errors)
+                .build();
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ErrorResponse handleBusinessException(BusinessException e) {
+        return ErrorResponse.builder()
+                .status("error")
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message("Exception")
+                .error(e.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleException(Exception e) {
+        return ErrorResponse.builder()
+                .status("error")
+                .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(e.getMessage())
+                .error(e.getMessage())
                 .build();
     }
 

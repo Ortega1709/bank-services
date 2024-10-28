@@ -40,4 +40,5 @@ public class AccountKafkaProducer {
 
         kafkaTemplate.send(accountCreationFailedEventMessage);
     }
+
 }
