@@ -1,15 +1,20 @@
 package com.ortega.account.account;
 
-import com.ortega.account.event.account.AccountCreatedEvent;
-import com.ortega.account.event.account.AccountCreationFailedEvent;
-import com.ortega.account.event.customer.CustomerCreatedEvent;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ortega.account.customer.CustomerClient;
+import com.ortega.account.customer.CustomerDTO;
+import com.ortega.account.event.account.AccountStatusUpdatedEvent;
 import com.ortega.account.exception.AccountAlreadyExistsException;
 import com.ortega.account.exception.AccountNotFoundException;
+import com.ortega.account.exception.BusinessException;
+import com.ortega.account.exception.InsufficientBalanceException;
+import com.ortega.account.response.SuccessResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,8 +28,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AccountService {
 
-    private final AccountRepository accountRepository;
+    private final ObjectMapper objectMapper;
     private final AccountMapper accountMapper;
+    private final CustomerClient customerClient;
+    private final AccountRepository accountRepository;
+    private final AccountKafkaProducer accountKafkaProducer;
 
     @Transactional
     public AccountDTO createAccount(AccountRequest request) {
@@ -66,6 +74,68 @@ public class AccountService {
         log.info("Deleting account by customer id :: {}", customerId);
 
         accountRepository.deleteByCustomerId(customerId);
+    }
+
+
+    @Transactional
+    public AccountDTO updateAccountStatusById(UUID accountId, Boolean status) {
+        String action = status ? "Activating" : "Deactivating";
+        log.info("{} account status :: {}", action, accountId);
+
+        Account account = findAccountById(accountId);
+        account.setStatus(status);
+
+        accountRepository.saveAndFlush(account);
+        SuccessResponse successResponse = customerClient.findCustomerById(account.getCustomerId());
+
+        if (successResponse.getCode() != HttpStatus.OK.value())
+            throw new BusinessException("Something went wrong");
+
+        CustomerDTO customerDTO = objectMapper.convertValue(successResponse.getData(), CustomerDTO.class);
+        accountKafkaProducer.produceAccountStatusUpdatedEvent(
+                new AccountStatusUpdatedEvent(
+                        customerDTO.getFirstName(),
+                        customerDTO.getLastName(),
+                        customerDTO.getEmail(),
+                        status
+                )
+        );
+
+        return accountMapper.toDTO(account);
+    }
+
+    @Transactional
+    public AccountDTO creditAccount(AccountTransactionRequest request) {
+        if (request.amount().compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Credit amount must be positive");
+
+        Account account = findAccountById(request.accountId());
+        account.setBalance(account.getBalance().add(request.amount()));
+        return accountMapper.toDTO(accountRepository.save(account));
+    }
+
+    @Transactional
+    public AccountDTO debitAccount(AccountTransactionRequest request) {
+        if (request.amount().compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Credit amount must be positive");
+
+
+        Account account = findAccountById(request.accountId());
+        if (account.getBalance().compareTo(request.amount()) < 0)
+            throw new InsufficientBalanceException(
+                    String.format("Insufficient balance for debit transaction %f", request.amount())
+            );
+
+        account.setBalance(account.getBalance().subtract(request.amount()));
+        return accountMapper.toDTO(accountRepository.save(account));
+    }
+
+    private Account findAccountById(UUID accountId) {
+        return accountRepository.findById(accountId).orElseThrow(
+                () -> new AccountNotFoundException(
+                        String.format("Account with id %s not found", accountId)
+                )
+        );
     }
 
     private String generateAccountNumber() {

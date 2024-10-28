@@ -32,21 +32,6 @@ public class AccountKafkaConfig {
         return kafkaTemplate(AccountEvent.class);
     }
 
-    @Bean
-    public KafkaTemplate<String, NotificationEvent> notificationKafkaTemplate() {
-        return kafkaTemplate(NotificationEvent.class);
-    }
-
-    @Bean
-    public ConsumerFactory<String, CustomerEvent> customerKafkaConsumerFactory() {
-        return consumerFactory("customer-group", CustomerEvent.class);
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, CustomerEvent> customerEventKafkaListenerContainerFactory() {
-        return kafkaListenerContainerFactory(customerKafkaConsumerFactory());
-    }
-
 
     private <T> KafkaTemplate<String, T> kafkaTemplate(Class<T> eventType) {
         Map<String, Object> producerConfigs = new HashMap<>();

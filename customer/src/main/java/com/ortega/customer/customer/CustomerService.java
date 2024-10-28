@@ -6,6 +6,7 @@ import com.ortega.customer.account.AccountDTO;
 import com.ortega.customer.account.AccountRequest;
 import com.ortega.customer.event.customer.CustomerCreatedEvent;
 import com.ortega.customer.event.customer.CustomerDeletedEvent;
+import com.ortega.customer.exception.BusinessException;
 import com.ortega.customer.exception.CustomerAlreadyExistsException;
 import com.ortega.customer.exception.CustomerNotFoundException;
 import com.ortega.customer.response.SuccessResponse;
@@ -47,11 +48,10 @@ public class CustomerService {
         );
 
         if (successResponse.getCode() != HttpStatus.CREATED.value())
-            throw new CustomerNotFoundException(successResponse.getMessage());
+            throw new BusinessException("Something went wrong");
 
 
         AccountDTO accountDTO = new ObjectMapper().convertValue(successResponse.getData(), AccountDTO.class);
-
         customerKafkaProducer.produceCustomerCreatedEvent(
                 new CustomerCreatedEvent(
                         accountDTO.getAccountNumber(),

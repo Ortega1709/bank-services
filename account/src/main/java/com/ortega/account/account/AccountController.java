@@ -1,6 +1,7 @@
 package com.ortega.account.account;
 
 import com.ortega.account.response.SuccessResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +20,7 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SuccessResponse createAccount(@RequestBody AccountRequest request) {
+    public SuccessResponse createAccount(@Valid @RequestBody AccountRequest request) {
         AccountDTO accountDTO = accountService.createAccount(request);
 
         return SuccessResponse.builder()
@@ -70,6 +71,58 @@ public class AccountController {
                 .code(HttpStatus.OK.value())
                 .message("Account deleted successfully")
                 .data(null)
+                .build();
+    }
+
+    @PostMapping("/{accountId}/activate")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponse activateAccount(@PathVariable("accountId") UUID accountId) {
+        AccountDTO accountDTO = accountService.updateAccountStatusById(accountId, true);
+
+        return SuccessResponse.builder()
+                .status("success")
+                .code(HttpStatus.OK.value())
+                .message("Account activated successfully")
+                .data(accountDTO)
+                .build();
+    }
+
+    @PostMapping("/{accountId}/deactivate")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponse deactivateAccount(@PathVariable("accountId") UUID accountId) {
+        AccountDTO accountDTO = accountService.updateAccountStatusById(accountId, false);
+
+        return SuccessResponse.builder()
+                .status("success")
+                .code(HttpStatus.OK.value())
+                .message("Account deactivated successfully")
+                .data(accountDTO)
+                .build();
+    }
+
+    @PostMapping("/debit")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponse debitAccount(@Valid @RequestBody AccountTransactionRequest request) {
+        AccountDTO accountDTO = accountService.debitAccount(request);
+
+        return SuccessResponse.builder()
+                .status("success")
+                .code(HttpStatus.OK.value())
+                .message("Account debited successfully")
+                .data(accountDTO)
+                .build();
+    }
+
+    @PostMapping("/credit")
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponse creditAccount(@Valid @RequestBody AccountTransactionRequest request) {
+        AccountDTO accountDTO = accountService.creditAccount(request);
+
+        return SuccessResponse.builder()
+                .status("success")
+                .code(HttpStatus.OK.value())
+                .message("Account credited successfully")
+                .data(accountDTO)
                 .build();
     }
 

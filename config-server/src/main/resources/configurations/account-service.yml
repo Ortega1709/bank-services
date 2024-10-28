@@ -11,6 +11,9 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
 
-
 server:
   port: 8084
+
+application:
+  config:
+    customer-url: http://localhost:8083/api/v1/customers

@@ -1,8 +1,7 @@
 package com.ortega.account.account;
 
-import com.ortega.account.event.account.AccountCreatedEvent;
-import com.ortega.account.event.account.AccountCreationFailedEvent;
 import com.ortega.account.event.account.AccountEvent;
+import com.ortega.account.event.account.AccountStatusUpdatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -19,26 +18,16 @@ public class AccountKafkaProducer {
 
     private final KafkaTemplate<String, AccountEvent> kafkaTemplate;
 
-    public void produceAccountCreatedEvent(AccountCreatedEvent event) {
-        log.info("Producing account created event: {}", event);
+    public void produceAccountStatusUpdatedEvent(AccountStatusUpdatedEvent event) {
+        log.info("Producing account status updated event: {}", event);
 
-        Message<AccountCreatedEvent> accountCreatedEventMessage = MessageBuilder
+        Message<AccountStatusUpdatedEvent> message = MessageBuilder
                 .withPayload(event)
-                .setHeader(TOPIC, "account-created-topic")
+                .setHeader(TOPIC, "account-status-updated-topic")
                 .build();
 
-        kafkaTemplate.send(accountCreatedEventMessage);
+        kafkaTemplate.send(message);
     }
 
-    public void produceAccountCreationFailedEvent(AccountCreationFailedEvent event) {
-        log.info("Producing account creation failed event: {}", event);
-
-        Message<AccountCreationFailedEvent> accountCreationFailedEventMessage = MessageBuilder
-                .withPayload(event)
-                .setHeader(TOPIC, "account-creation-failed-topic")
-                .build();
-
-        kafkaTemplate.send(accountCreationFailedEventMessage);
-    }
 
 }

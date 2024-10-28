@@ -1,6 +1,5 @@
 package com.ortega.account.event.account;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountCreatedEvent implements AccountEvent {
-    private String accountNumber;
-    private String fistName;
+public class AccountStatusUpdatedEvent implements AccountEvent {
+    private String firstName;
     private String lastName;
-    private Integer pin;
+    private String email;
+    private Boolean status;
 }
