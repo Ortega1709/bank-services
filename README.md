@@ -52,19 +52,4 @@ L'architecture de cette application suit les principes du **Domain-Driven Design
 - **Zipkin** ou **Jaeger** pour le traçage distribué.
 - **Spring Security** et **JWT** pour la sécurité.
 
-## Prérequis
-
-Avant de commencer, assurez-vous d'avoir installé les outils suivants :
-
-- **Java 17** ou plus récent
-- **Maven** pour la gestion des dépendances
-- **PostgreSQL** pour la base de données
-- **IntelliJ IDEA** comme environnement de développement intégré (IDE) ou autre éditeur
-- **Git** pour le contrôle de version
-
-## Installation
-
-1. **Cloner le projet** :
-   ```bash
-   git clone https://github.com/ortega-kb/bank-services.git
    
