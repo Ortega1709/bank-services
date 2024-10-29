@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AccountJacksonConfig {
 
+    /**
+     * Object mapper for json response.
+     *
+     * @return Mapper with new JavaTimeModule.
+     */
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();

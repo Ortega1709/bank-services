@@ -34,6 +34,13 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final AccountKafkaProducer accountKafkaProducer;
 
+    /**
+     * Create a new customer account.
+     *
+     * @param request Object that contains account information.
+     * @throws AccountAlreadyExistsException if an account already exists by customerId.
+     * @return AccountDTO that contains account created information.
+     */
     @Transactional
     public AccountDTO createAccount(AccountRequest request) {
         log.info("Creating account for customer :: {}", request.customerId());
@@ -56,6 +63,13 @@ public class AccountService {
         return accountMapper.toDTO(account);
     }
 
+    /**
+     * Retrieve account information.
+     *
+     * @param accountNumber Unique accountNumber.
+     * @throws AccountNotFoundException if its doesn't find.
+     * @return AccountDTO that contains account information.
+     */
     public AccountDTO findByAccountNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber).map(accountMapper::toDTO)
                 .orElseThrow(
@@ -65,18 +79,35 @@ public class AccountService {
                 );
     }
 
+    /**
+     * Find All accounts
+     *
+     * @param pageable PageRequest to return size and page of accounts.
+     * @return Pageable AccountDTO.
+     */
     public Page<AccountDTO> findAll(Pageable pageable) {
         return accountRepository.findAll(pageable).map(accountMapper::toDTO);
     }
 
-    @Transactional
+    /**
+     * Delete an existing account.
+     *
+     * @param customerId UUID identifier associate to account.
+     */
     public void deleteAccountByCustomerId(UUID customerId) {
         log.info("Deleting account by customer id :: {}", customerId);
 
         accountRepository.deleteByCustomerId(customerId);
     }
 
-
+    /**
+     * Update account status to True or False.
+     *
+     * @param accountId UUID identifier of an account.
+     * @param status Boolean True or False.
+     * @throws BusinessException if request to find client information failed.
+     * @return AccountDTO object that contains account status updated.
+     */
     @Transactional
     public AccountDTO updateAccountStatusById(UUID accountId, Boolean status) {
         String action = status ? "Activating" : "Deactivating";
@@ -104,6 +135,12 @@ public class AccountService {
         return accountMapper.toDTO(account);
     }
 
+    /**
+     * Credit an existing account.
+     *
+     * @param request Object contains accountId and Amount to credit.
+     * @return AccountDTO that contains account credited information.
+     */
     @Transactional
     public AccountDTO creditAccount(AccountTransactionRequest request) {
         if (request.amount().compareTo(BigDecimal.ZERO) <= 0)
@@ -114,6 +151,14 @@ public class AccountService {
         return accountMapper.toDTO(accountRepository.save(account));
     }
 
+    /**
+     * Debit an existing account.
+     *
+     * @param request Object contains accountId and Amount to debit.
+     * @throws IllegalArgumentException if credit amounts aren't positive.
+     * @throws InsufficientBalanceException if account balance isn't bigger than debited amount.
+     * @return AccountDTO that contains account debited information.
+     */
     @Transactional
     public AccountDTO debitAccount(AccountTransactionRequest request) {
         if (request.amount().compareTo(BigDecimal.ZERO) <= 0)
@@ -130,6 +175,13 @@ public class AccountService {
         return accountMapper.toDTO(accountRepository.save(account));
     }
 
+    /**
+     * Retrieve account information.
+     *
+     * @param accountId unique ID of account.
+     * @throws AccountNotFoundException If its doesn't find.
+     * @return Account object that contains information.
+     */
     private Account findAccountById(UUID accountId) {
         return accountRepository.findById(accountId).orElseThrow(
                 () -> new AccountNotFoundException(
@@ -138,15 +190,24 @@ public class AccountService {
         );
     }
 
+    /**
+     * Generate account number for new customer.
+     *
+     * @return The generated account number.
+     */
     private String generateAccountNumber() {
         String accountPrefix = "ACC";
-
         String datePart = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
         int randomPart = new Random().nextInt(100000);
 
         return accountPrefix + datePart + String.format("%05d", randomPart);
     }
 
+    /**
+     * Generate random pin for new customer.
+     *
+     * @return A random pin of six digits.
+     */
     private Integer generateRandomPin() {
         int generatedPin = new Random().nextInt(1000000);
         return Integer.valueOf(String.format("%06d", generatedPin));

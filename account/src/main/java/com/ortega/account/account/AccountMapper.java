@@ -5,6 +5,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccountMapper {
 
+    /**
+     * Map AccountRequest to Account.
+     *
+     * @param request
+     * @return Object Account.
+     */
     public Account toAccount(AccountRequest request) {
         if (request == null) return null;
 
@@ -13,6 +19,12 @@ public class AccountMapper {
                 .build();
     }
 
+    /**
+     * Map Account to AccountDTO.
+     *
+     * @param account
+     * @return Object AccountDTO.
+     */
     public AccountDTO toDTO(Account account) {
         if (account == null) return null;
 

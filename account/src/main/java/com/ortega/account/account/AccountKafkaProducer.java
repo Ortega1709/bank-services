@@ -18,8 +18,13 @@ public class AccountKafkaProducer {
 
     private final KafkaTemplate<String, AccountEvent> kafkaTemplate;
 
+    /**
+     * Produce account status updated event.
+     *
+     * @param event Object contains information about an account status updated.
+     */
     public void produceAccountStatusUpdatedEvent(AccountStatusUpdatedEvent event) {
-        log.info("Producing account status updated event: {}", event);
+        log.info("Producing account status updated event:: {}", event);
 
         Message<AccountStatusUpdatedEvent> message = MessageBuilder
                 .withPayload(event)
@@ -28,6 +33,5 @@ public class AccountKafkaProducer {
 
         kafkaTemplate.send(message);
     }
-
 
 }

@@ -32,7 +32,13 @@ public class AccountKafkaConfig {
         return kafkaTemplate(AccountEvent.class);
     }
 
-
+    /**
+     * Application kafka template.
+     *
+     * @param eventType Any event to send.
+     * @return KafkaTemplate with configurations.
+     * @param <T>
+     */
     private <T> KafkaTemplate<String, T> kafkaTemplate(Class<T> eventType) {
         Map<String, Object> producerConfigs = new HashMap<>();
         producerConfigs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -41,6 +47,7 @@ public class AccountKafkaConfig {
 
         return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(producerConfigs));
     }
+
 
     private <T> ConsumerFactory<String, T> consumerFactory(String groupId, Class<T> eventType) {
         Map<String, Object> consumerConfigs = new HashMap<>();

@@ -18,6 +18,12 @@ import java.util.HashMap;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Handle AccountAlreadyExistsException.
+     *
+     * @param e contains exception message.
+     * @return Object Error Response.
+     */
     @ExceptionHandler(AccountAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleAccountAlreadyExistsException(AccountAlreadyExistsException e) {
@@ -29,6 +35,12 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    /**
+     * Handle AccountNotFoundException.
+     *
+     * @param e contains exception message.
+     * @return Object ErrorResponse.
+     */
     @ExceptionHandler(AccountNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleAccountNotFoundException(AccountNotFoundException e) {
@@ -40,6 +52,12 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    /**
+     * Handle BusinessException.
+     *
+     * @param e contains exception message.
+     * @return Object ErrorResponse.
+     */
     @ExceptionHandler(BusinessException.class)
     public ErrorResponse handleBusinessException(BusinessException e) {
         return ErrorResponse.builder()
@@ -50,6 +68,12 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    /**
+     * Handle InsufficientBalanceException.
+     *
+     * @param e contains exception message.
+     * @return Object ErrorResponse.
+     */
     @ExceptionHandler(InsufficientBalanceException.class)
     public ErrorResponse handleInsufficientBalanceException(InsufficientBalanceException e) {
         return ErrorResponse.builder()
@@ -60,6 +84,12 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    /**
+     * Handle MethodArgumentNotValidException.
+     *
+     * @param e contains exception message.
+     * @return Object ErrorResponse.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         var errors = new HashMap<String, String>();
@@ -79,6 +109,12 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    /**
+     * Handle MethodArgumentTypeMismatchException.
+     *
+     * @param e contains exception message.
+     * @return Object ErrorResponse.
+     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {

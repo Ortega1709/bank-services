@@ -18,6 +18,12 @@ public class AccountController {
 
     private final AccountService accountService;
 
+    /**
+     * Handle a new account creation request.
+     *
+     * @param request Object that contains account information.
+     * @return Object SuccessResponse of AccountDTO.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse createAccount(@Valid @RequestBody AccountRequest request) {
@@ -31,6 +37,13 @@ public class AccountController {
                 .build();
     }
 
+    /**
+     * Handle find All accounts request.
+     *
+     * @param page batch of accounts fetched.
+     * @param size max size of accounts fetched.
+     * @return Object SuccessResponse of Pageable AccountDTO.
+     */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public SuccessResponse findAll(
@@ -49,6 +62,12 @@ public class AccountController {
                 .build();
     }
 
+    /**
+     * Handle find an account request.
+     *
+     * @param accountNumber Unique accountNumber associate to account.
+     * @return Object SuccessResponse of AccountDTO.
+     */
     @GetMapping("/{accountNumber}")
     @ResponseStatus(HttpStatus.OK)
     public SuccessResponse findByAccountNumber(@PathVariable("accountNumber") String accountNumber) {
@@ -61,6 +80,12 @@ public class AccountController {
                 .build();
     }
 
+    /**
+     * Handle delete an existing account request.
+     *
+     * @param customerId UUID unique identifier associate to account.
+     * @return Object SuccessResponse.
+     */
     @DeleteMapping("/{customerId}")
     @ResponseStatus(HttpStatus.OK)
     public SuccessResponse deleteAccount(@PathVariable("customerId") UUID customerId) {
@@ -74,6 +99,12 @@ public class AccountController {
                 .build();
     }
 
+    /**
+     * Handle activate account request.
+     *
+     * @param accountId UUID associate to account.
+     * @return Object SuccessResponse of AccountDTO.
+     */
     @PostMapping("/{accountId}/activate")
     @ResponseStatus(HttpStatus.OK)
     public SuccessResponse activateAccount(@PathVariable("accountId") UUID accountId) {
@@ -87,6 +118,12 @@ public class AccountController {
                 .build();
     }
 
+    /**
+     * Handle deactivate account request.
+     *
+     * @param accountId UUID associate to account.
+     * @return Object SuccessResponse of
+     */
     @PostMapping("/{accountId}/deactivate")
     @ResponseStatus(HttpStatus.OK)
     public SuccessResponse deactivateAccount(@PathVariable("accountId") UUID accountId) {
@@ -100,6 +137,12 @@ public class AccountController {
                 .build();
     }
 
+    /**
+     * Handle debit account request.
+     *
+     * @param request Object that contains accountId and amount.
+     * @return Object SuccessResponse of AccountDTO debited.
+     */
     @PostMapping("/debit")
     @ResponseStatus(HttpStatus.OK)
     public SuccessResponse debitAccount(@Valid @RequestBody AccountTransactionRequest request) {
@@ -113,6 +156,12 @@ public class AccountController {
                 .build();
     }
 
+    /**
+     * Handle account credit request.
+     *
+     * @param request Object that contains accountId and amount.
+     * @return Object SuccessResponse of AccountDTO credited.
+     */
     @PostMapping("/credit")
     @ResponseStatus(HttpStatus.OK)
     public SuccessResponse creditAccount(@Valid @RequestBody AccountTransactionRequest request) {

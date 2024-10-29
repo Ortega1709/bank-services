@@ -13,6 +13,12 @@ import java.util.UUID;
 )
 public interface CustomerClient {
 
+    /**
+     * Find an existing customer.
+     *
+     * @param customerId UUID associate to Customer.
+     * @return Object SuccessResponse of CustomerDTO.
+     */
     @GetMapping("/{customerId}")
     SuccessResponse findCustomerById(@PathVariable("customerId") UUID customerId);
 
