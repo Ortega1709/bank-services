@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
@@ -38,8 +39,8 @@ public class AccountService {
      * Create a new customer account.
      *
      * @param request Object that contains account information.
-     * @throws AccountAlreadyExistsException if an account already exists by customerId.
      * @return AccountDTO that contains account created information.
+     * @throws AccountAlreadyExistsException if an account already exists by customerId.
      */
     @Transactional
     public AccountDTO createAccount(AccountRequest request) {
@@ -67,8 +68,8 @@ public class AccountService {
      * Retrieve account information.
      *
      * @param accountNumber Unique accountNumber.
-     * @throws AccountNotFoundException if its doesn't find.
      * @return AccountDTO that contains account information.
+     * @throws AccountNotFoundException if its doesn't find.
      */
     public AccountDTO findByAccountNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber).map(accountMapper::toDTO)
@@ -104,9 +105,9 @@ public class AccountService {
      * Update account status to True or False.
      *
      * @param accountId UUID identifier of an account.
-     * @param status Boolean True or False.
-     * @throws BusinessException if request to find client information failed.
+     * @param status    Boolean True or False.
      * @return AccountDTO object that contains account status updated.
+     * @throws BusinessException if request to find client information failed.
      */
     @Transactional
     public AccountDTO updateAccountStatusById(UUID accountId, Boolean status) {
@@ -155,9 +156,9 @@ public class AccountService {
      * Debit an existing account.
      *
      * @param request Object contains accountId and Amount to debit.
-     * @throws IllegalArgumentException if credit amounts aren't positive.
-     * @throws InsufficientBalanceException if account balance isn't bigger than debited amount.
      * @return AccountDTO that contains account debited information.
+     * @throws IllegalArgumentException     if credit amounts aren't positive.
+     * @throws InsufficientBalanceException if account balance isn't bigger than debited amount.
      */
     @Transactional
     public AccountDTO debitAccount(AccountTransactionRequest request) {
@@ -168,7 +169,10 @@ public class AccountService {
         Account account = findAccountById(request.accountId());
         if (account.getBalance().compareTo(request.amount()) < 0)
             throw new InsufficientBalanceException(
-                    String.format("Insufficient balance for debit transaction %f", request.amount())
+                    String.format(
+                            "Insufficient balance for debit transaction %.2f",
+                            request.amount().setScale(2, RoundingMode.HALF_UP)
+                    )
             );
 
         account.setBalance(account.getBalance().subtract(request.amount()));
@@ -179,8 +183,8 @@ public class AccountService {
      * Retrieve account information.
      *
      * @param accountId unique ID of account.
-     * @throws AccountNotFoundException If its doesn't find.
      * @return Account object that contains information.
+     * @throws AccountNotFoundException If its doesn't find.
      */
     private Account findAccountById(UUID accountId) {
         return accountRepository.findById(accountId).orElseThrow(

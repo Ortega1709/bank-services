@@ -1,8 +1,7 @@
 package com.ortega.account.account;
 
-import jakarta.validation.constraints.Negative;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -12,8 +11,7 @@ public record AccountTransactionRequest(
         UUID accountId,
 
         @NotNull(message = "Amount is required")
-        @Negative(message = "Amount mustn't be negative")
-        @NotBlank(message = "Amount mustn't be blank")
+        @Positive(message = "Amount mustn't be negative")
         BigDecimal amount
 ) {
 }

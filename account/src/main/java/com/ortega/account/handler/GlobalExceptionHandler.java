@@ -59,6 +59,7 @@ public class GlobalExceptionHandler {
      * @return Object ErrorResponse.
      */
     @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBusinessException(BusinessException e) {
         return ErrorResponse.builder()
                 .status("error")
@@ -75,6 +76,7 @@ public class GlobalExceptionHandler {
      * @return Object ErrorResponse.
      */
     @ExceptionHandler(InsufficientBalanceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInsufficientBalanceException(InsufficientBalanceException e) {
         return ErrorResponse.builder()
                 .status("error")
@@ -91,6 +93,7 @@ public class GlobalExceptionHandler {
      * @return Object ErrorResponse.
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         var errors = new HashMap<String, String>();
         e.getBindingResult().getAllErrors()
@@ -106,6 +109,23 @@ public class GlobalExceptionHandler {
                 .message("Invalid request")
                 .error("Fields are invalid")
                 .errors(errors)
+                .build();
+    }
+
+    /**
+     * Handle Exception.
+     *
+     * @param e contains exception message.
+     * @return Object ErrorResponse.
+     */
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleException(Exception e) {
+        return ErrorResponse.builder()
+                .status("error")
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message("Something went wrong")
+                .error(e.getMessage())
                 .build();
     }
 
