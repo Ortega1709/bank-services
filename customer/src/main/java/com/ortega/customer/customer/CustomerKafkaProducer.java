@@ -19,6 +19,11 @@ public class CustomerKafkaProducer {
 
     private final KafkaTemplate<String, CustomerEvent> kafkaTemplate;
 
+    /**
+     * Produce customer created event.
+     *
+     * @param event Object that contains information of customer created.
+     */
     public void produceCustomerCreatedEvent(CustomerCreatedEvent event) {
         log.info("Producing customer created event:: {}", event);
         Message<CustomerCreatedEvent> message = MessageBuilder

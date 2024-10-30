@@ -27,6 +27,12 @@ public class EmailService {
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
 
+    /**
+     * Send email notification of account status updated.
+     *
+     * @param event Object that contains Account status updated information.
+     * @throws MessagingException If email is not sent successfully.
+     */
     @Async
     public void sendAccountStatusUpdatedNotification(AccountStatusUpdatedEvent event) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -66,6 +72,12 @@ public class EmailService {
         }
     }
 
+    /**
+     * Send email notification of customer created.
+     *
+     * @param event
+     * @throws MessagingException If email is not sent successfully.
+     */
     @Async
     public void sendCustomerCreatedNotification(CustomerCreatedEvent event) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();

@@ -48,6 +48,13 @@ public class NotificationKafkaConfig {
         return kafkaListenerContainerFactory(accountConsumerFactory());
     }
 
+    /**
+     * Application kafka template (Generic).
+     *
+     * @param eventType Any event to send.
+     * @return KafkaTemplate with configurations.
+     * @param <T>
+     */
     private <T> KafkaTemplate<String, T> kafkaTemplate(Class<T> eventType) {
         Map<String, Object> producerConfigs = new HashMap<>();
         producerConfigs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);

@@ -17,6 +17,12 @@ import java.util.HashMap;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Handle Exception Customer Already Exception.
+     *
+     * @param e Object that contains exception message.
+     * @return Object ErrorResponse.
+     */
     @ExceptionHandler(CustomerAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleCustomerAlreadyExistsException(CustomerAlreadyExistsException e) {
@@ -28,6 +34,12 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    /**
+     * Handle Exception Customer Not found.
+     *
+     * @param e Object that contains exception message.
+     * @return Object ErrorRepose.
+     */
     @ExceptionHandler(CustomerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleCustomerNotFoundException(CustomerNotFoundException e) {
@@ -39,6 +51,12 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    /**
+     * Handle Exception MethodArgumentNotValid Exception.
+     *
+     * @param e Object that contains exception message.
+     * @return Object ErrorResponse.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         var errors = new HashMap<String, String>();
@@ -58,6 +76,12 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    /**
+     * Handle Exception BusinessException.
+     *
+     * @param e Object that contains exception message.
+     * @return Object ErrorResponse.
+     */
     @ExceptionHandler(BusinessException.class)
     public ErrorResponse handleBusinessException(BusinessException e) {
         return ErrorResponse.builder()
@@ -68,6 +92,12 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    /**
+     * Handle all exceptions.
+     *
+     * @param e Object that contains exception message.
+     * @return Object ErrorResponse.
+     */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(Exception e) {
@@ -79,6 +109,12 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    /**
+     * Handle Exception MethodArgumentTypeMismatch.
+     *
+     * @param e Object that contains exception message.
+     * @return Object ErrorResponse.
+     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {

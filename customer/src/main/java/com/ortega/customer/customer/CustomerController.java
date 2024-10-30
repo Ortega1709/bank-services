@@ -18,6 +18,13 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
+    /**
+     * Handle create new customer request.
+     *
+     * @param request Object that contains information about customer.
+     * @return Object SuccessResponse that contains created customer information.
+     * @throws ParseException If we have error to parse request.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse createCustomer(@RequestBody CustomerRequest request) throws ParseException {
@@ -30,6 +37,13 @@ public class CustomerController {
                 .build();
     }
 
+    /**
+     * Handle update an existing customer request.
+     *
+     * @param request Object that contains information about customer.
+     * @return Object SuccessResponse that contains customer updated.
+     * @throws ParseException If we have error to parse request.
+     */
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public SuccessResponse updateCustomer(@RequestBody CustomerRequest request) throws ParseException {
@@ -42,6 +56,13 @@ public class CustomerController {
                 .build();
     }
 
+    /**
+     * Handle find all customer's request.
+     *
+     * @param page batch of accounts fetched.
+     * @param size max size of accounts fetched.
+     * @return Object SuccessResponse of Pageable CustomerDTO.
+     */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public SuccessResponse findAll(
@@ -60,6 +81,12 @@ public class CustomerController {
                 .build();
     }
 
+    /**
+     * Handle find an account request.
+     *
+     * @param customerId Unique customerId associate to customer.
+     * @return Object SuccessResponse of CustomerDTO.
+     */
     @GetMapping("/{customerId}")
     @ResponseStatus(HttpStatus.OK)
     public SuccessResponse findById(@PathVariable("customerId") UUID customerId) {
@@ -72,6 +99,12 @@ public class CustomerController {
                 .build();
     }
 
+    /**
+     * Handle delete an existing customer request.
+     *
+     * @param customerId UUID associate to customer.
+     * @return Object SuccessResponse of CustomerDTO.
+     */
     @DeleteMapping("/{customerId}")
     @ResponseStatus(HttpStatus.OK)
     public SuccessResponse deleteCustomer(@PathVariable("customerId") UUID customerId) {

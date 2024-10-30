@@ -32,6 +32,13 @@ public class CustomerService {
     private final CustomerMapper customerMapper;
     private final AccountClient accountClient;
 
+    /**
+     * Create a new customer.
+     *
+     * @param request Object that contains customer information.
+     * @return Object CustomerDTO that contains customer created information.
+     * @throws ParseException If we get error to parse create account request.
+     */
     @Transactional
     public CustomerDTO createCustomer(CustomerRequest request) throws ParseException {
         if (customerRepository.existsByEmail(request.email())) {
@@ -65,6 +72,13 @@ public class CustomerService {
         return customerMapper.toDTO(customer);
     }
 
+    /**
+     * Update customer information.
+     *
+     * @param request Object that contains customer information.
+     * @return CustomerDTO that contains customer information.
+     * @throws ParseException ...
+     */
     public CustomerDTO updateCustomer(CustomerRequest request) throws ParseException {
         customerRepository.findById(request.customerId()).orElseThrow(
                 () -> new CustomerNotFoundException(
@@ -77,12 +91,24 @@ public class CustomerService {
         return customerMapper.toDTO(customerRepository.save(customer));
     }
 
+    /**
+     * Find all customers.
+     *
+     * @param pageable PageRequest to return size and page of customers.
+     * @return Pageable CustomerDTO.
+     */
     public Page<CustomerDTO> findAll(Pageable pageable) {
         return customerRepository
                 .findAll(pageable)
                 .map(customerMapper::toDTO);
     }
 
+    /**
+     * Find one customer.
+     *
+     * @param customerId UUID associate to customer.
+     * @return CustomerDTO that contains customer information.
+     */
     public CustomerDTO findById(UUID customerId) {
         return customerRepository
                 .findById(customerId)
@@ -93,6 +119,11 @@ public class CustomerService {
                 );
     }
 
+    /**
+     * Delete an existing
+     *
+     * @param customerId
+     */
     @Transactional
     public void deleteCustomerById(UUID customerId) {
         customerRepository.deleteById(customerId);

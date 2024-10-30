@@ -23,6 +23,13 @@ public class NotificationKafkaConsumer {
     private final ObjectMapper objectMapper;
     private final NotificationRepository notificationRepository;
 
+    /**
+     * Consume Account status updated event from Account service.
+     *
+     * @param event Event from Account Service.
+     * @throws MessagingException If email notification is not sent.
+     * @throws JsonProcessingException If we get error of reading event with object mapper.
+     */
     @KafkaListener(topics = "account-status-updated-topic", groupId = "notification-group")
     public void consumeAccountStatusUpdatedEvent(String event) throws MessagingException, JsonProcessingException {
         log.info("Consuming account status updated event :: {}", event);
@@ -46,6 +53,13 @@ public class NotificationKafkaConsumer {
         emailService.sendAccountStatusUpdatedNotification(accountStatusUpdatedEvent);
     }
 
+    /**
+     * Consume Customer created event from Customer service.
+     *
+     * @param event Event from Customer Service.
+     * @throws MessagingException If email notification is not sent.
+     * @throws JsonProcessingException If we get error reading event with object mapper.
+     */
     @KafkaListener(topics = "customer-created-topic", groupId = "notification-group")
     public void consumeCustomerCreatedEvent(String event) throws MessagingException, JsonProcessingException {
         log.info("Consuming customer created event :: {}", event);

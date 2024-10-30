@@ -17,6 +17,11 @@ public class MailSenderConfig {
     @Value("${spring.mail.password}")
     private String password;
 
+    /**
+     * Configuration of javaMailSender.
+     *
+     * @return Object configuration of JavaMailSender.
+     */
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();

@@ -14,6 +14,11 @@ public class CustomerFeignConfig {
     private static final int CONNECT_TIMEOUT_MILLIS = 5000;
     private static final int READ_TIMEOUT_MILLIS = 10000;
 
+    /**
+     * Request Options for feign request.
+     *
+     * @return New Request options request.
+     */
     @Bean
     public Request.Options feignRequestOptions() {
         return new Request.Options(
@@ -25,6 +30,11 @@ public class CustomerFeignConfig {
         );
     }
 
+    /**
+     * Request feign retryer.
+     *
+     * @return New Default feign retryer.
+     */
     @Bean
     public Retryer feignRetryer() {
         return new Retryer.Default(
@@ -34,6 +44,11 @@ public class CustomerFeignConfig {
         );
     }
 
+    /**
+     * Feign logger level.
+     *
+     * @return Full logger feign level.
+     */
     @Bean
     Logger.Level feignLoggerLevel() {
         return Logger.Level.FULL;

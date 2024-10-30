@@ -3,13 +3,17 @@ package com.ortega.customer.customer;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 
 @Component
 public class CustomerMapper {
 
-    public Customer toCustomer(CustomerRequest request) throws ParseException {
+    /**
+     * Map Customer request to Customer.
+     *
+     * @param request Object that contains information about customer request.
+     * @return Object Customer.
+     */
+    public Customer toCustomer(CustomerRequest request) {
         if (request == null) return null;
 
         return Customer.builder()
@@ -24,6 +28,12 @@ public class CustomerMapper {
                 .build();
     }
 
+    /**
+     * Map Customer to a Customer data transfer object.
+     *
+     * @param customer Object that contains information of customer.
+     * @return Object Customer data transfer object.
+     */
     public CustomerDTO toDTO(Customer customer) {
         if (customer == null) return null;
 
