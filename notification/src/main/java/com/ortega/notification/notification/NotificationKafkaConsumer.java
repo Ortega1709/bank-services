@@ -1,5 +1,7 @@
 package com.ortega.notification.notification;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ortega.notification.email.EmailService;
 import com.ortega.notification.event.account.AccountStatusUpdatedEvent;
 import com.ortega.notification.event.customer.CustomerCreatedEvent;
@@ -17,40 +19,49 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class NotificationKafkaConsumer {
 
-    private final NotificationRepository notificationRepository;
     private final EmailService emailService;
+    private final ObjectMapper objectMapper;
+    private final NotificationRepository notificationRepository;
 
-    @KafkaListener(topics = "account-status-updated-topic")
-    public void consumeAccountStatusUpdatedEvent(AccountStatusUpdatedEvent event) throws MessagingException {
-        log.info("Consuming account status updated topic :: {}", event);
+    @KafkaListener(topics = "account-status-updated-topic", groupId = "notification-group")
+    public void consumeAccountStatusUpdatedEvent(String event) throws MessagingException, JsonProcessingException {
+        log.info("Consuming account status updated event :: {}", event);
+
+        AccountStatusUpdatedEvent accountStatusUpdatedEvent = objectMapper
+                .readValue(event, AccountStatusUpdatedEvent.class);
+
         notificationRepository.save(
                 Notification.builder()
                         .notificationId(UUID.randomUUID())
                         .notificationType(
-                                event.getStatus() ?
+                                accountStatusUpdatedEvent.getStatus() ?
                                         NotificationType.ACTIVATION_ACCOUNT_NOTIFICATION :
                                         NotificationType.DEACTIVATION_ACCOUNT_NOTIFICATION
                         )
                         .notificationDate(LocalDateTime.now())
-                        .content(event)
+                        .content(accountStatusUpdatedEvent)
                         .build()
         );
 
-        emailService.sendAccountStatusUpdatedNotification(event);
+        emailService.sendAccountStatusUpdatedNotification(accountStatusUpdatedEvent);
     }
 
-    @KafkaListener(topics = "customer-created-topic")
-    public void consumeCustomerCreatedEvent(CustomerCreatedEvent event) throws MessagingException {
-        log.info("Consuming customer created topic :: {}", event);
+    @KafkaListener(topics = "customer-created-topic", groupId = "notification-group")
+    public void consumeCustomerCreatedEvent(String event) throws MessagingException, JsonProcessingException {
+        log.info("Consuming customer created event :: {}", event);
+
+        CustomerCreatedEvent customerCreatedEvent = objectMapper
+                .readValue(event, CustomerCreatedEvent.class);
+
         notificationRepository.save(
                 Notification.builder()
                         .notificationId(UUID.randomUUID())
                         .notificationType(NotificationType.CREATION_ACCOUNT_NOTIFICATION)
                         .notificationDate(LocalDateTime.now())
-                        .content(event)
+                        .content(customerCreatedEvent)
                         .build()
         );
 
-        emailService.sendCustomerCreatedNotification(event);
+        emailService.sendCustomerCreatedNotification(customerCreatedEvent);
     }
 }

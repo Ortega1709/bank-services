@@ -1,10 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue chez Banini</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f7;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h3 {
+            color: #0a3d62;
+        }
+        .header {
+            background-color: #0a3d62; /* Bleu foncé */
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content p {
+            color: #333;
+        }
+        .content strong {
+            color: #0a3d62;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.9em;
+            color: #777;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            margin-top: 20px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #0a3d62; /* Bleu foncé */
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .button:hover {
+            background-color: #062d4b; /* Bleu encore plus foncé pour effet hover */
+        }
+    </style>
 </head>
 <body>
-
+<div class="container">
+    <div class="header">
+        <h1>Bienvenue chez Banini</h1>
+    </div>
+    <div class="content">
+        <p>Bonjour <strong><span th:text="${customerName}"></span></strong>,</p>
+        <p>
+            Bienvenue chez <strong>Banini</strong> ! Nous sommes ravis de vous compter parmi nos clients et de vous accompagner
+            dans la gestion de vos finances. Votre compte a été créé avec succès et vous avez désormais accès à tous nos
+            services bancaires.
+        </p>
+        <h3>Détails de votre compte</h3>
+        <ul>
+            <li><strong>Numéro de compte :</strong> <span th:text="${accountNumber}"></span></li>
+            <li><strong>Accès :</strong> Connectez-vous à votre espace personnel pour explorer nos services et produits
+                financiers.
+            </li>
+            <li><strong>Assistance :</strong> Notre équipe est disponible pour répondre à toutes vos questions et pour vous
+                aider à démarrer avec votre nouveau compte.
+            </li>
+        </ul>
+        <h3>Votre PIN temporaire :</h3>
+        <p>Pour accéder à votre compte, utilisez le PIN temporaire suivant : <strong><span th:text="${pin}"></span></strong>. Nous vous recommandons de le changer lors de votre première connexion pour assurer la sécurité de votre compte.</p>
+        <h3>Conseils pour votre sécurité :</h3>
+        <p>Pour garantir la sécurité de vos informations, nous vous recommandons de personnaliser votre mot de passe et votre
+            PIN lors de votre première connexion, et de ne jamais les partager.</p>
+        <p>Encore une fois, bienvenue chez <strong>Banini</strong> ! Nous sommes impatients de vous aider à réaliser vos projets
+            et de vous offrir une expérience bancaire simple, sécurisée et agréable.</p>
+        <p style="text-align: center; margin-top: 20px;">
+            <a href="https://banini.com/login" class="button">Accéder à votre compte</a>
+        </p>
+        <p>Cordialement,<br>
+            L’équipe <strong>Banini</strong>
+        </p>
+    </div>
+    <div class="footer">
+        <p>© <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"/> <strong>Banini</strong>. Tous droits réservés.</p>
+    </div>
+</div>
 </body>
 </html>

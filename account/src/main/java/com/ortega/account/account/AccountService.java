@@ -95,6 +95,7 @@ public class AccountService {
      *
      * @param customerId UUID identifier associate to account.
      */
+    @Transactional
     public void deleteAccountByCustomerId(UUID customerId) {
         log.info("Deleting account by customer id :: {}", customerId);
 
