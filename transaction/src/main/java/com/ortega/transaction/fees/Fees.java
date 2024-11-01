@@ -30,7 +30,7 @@ public class Fees {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @PostConstruct
+    @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();

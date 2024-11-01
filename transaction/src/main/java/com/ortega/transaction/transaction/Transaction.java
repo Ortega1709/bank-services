@@ -2,6 +2,7 @@ package com.ortega.transaction.transaction;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,9 +20,9 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID transactionId;
     private String reference;
-    private UUID accountId;
-    private UUID toAccountId;
-    private BigDecimal fees;
+    private String accountNumber;
+    private String toAccountNumber;
+    private BigDecimal feesAmount;
 
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
@@ -29,6 +30,7 @@ public class Transaction {
 
     @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
-    private LocalDateTime transactionDate;
 
+    @CreationTimestamp
+    private LocalDateTime transactionDate;
 }

@@ -1,4 +1,4 @@
-package com.ortega.account.account;
+package com.ortega.transaction.account;
 
 import jakarta.validation.constraints.Negative;
 import jakarta.validation.constraints.NotNull;

@@ -1,15 +1,14 @@
-package com.ortega.account.account;
+package com.ortega.transaction.transaction;
 
-import jakarta.validation.constraints.Negative;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
-public record AccountTransactionRequest(
-        @NotNull(message = "Account id is required")
-        UUID accountId,
+public record TransactionRequest(
+        @NotNull(message = "Account ID is required")
+        String accountNumber,
+        String toAccountNumber,
 
         @NotNull(message = "Amount is required")
         @Positive(message = "Amount mustn't be negative")
