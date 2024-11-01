@@ -113,6 +113,8 @@ public class TransactionService {
                 request.amount()
         );
 
+        log.info("Fees amount :: {}", feesAmount);
+
         Transaction transaction = Transaction.builder()
                 .accountNumber(request.accountNumber())
                 .toAccountNumber(null)

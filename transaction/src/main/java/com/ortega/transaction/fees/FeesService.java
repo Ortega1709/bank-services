@@ -90,7 +90,7 @@ public class FeesService {
                                 BigDecimal.valueOf(100)
                         )
                 )
-        ).orElse(BigDecimal.ZERO); // If fees with transactionType and amount is not found, No transaction fees apply.
+        ).orElse(amount.add(BigDecimal.ZERO)); // If fees with transactionType and amount is not found, No transaction fees apply.
     }
 
 }
