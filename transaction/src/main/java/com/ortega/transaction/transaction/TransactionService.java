@@ -38,7 +38,68 @@ public class TransactionService {
                 request.amount()
         );
 
-        return TransactionDTO.builder().build();
+        Transaction transaction = Transaction.builder()
+                .accountNumber(request.accountNumber())
+                .toAccountNumber(request.toAccountNumber())
+                .feesAmount(feesAmount.subtract(request.amount()))
+                .reference(TransactionUtil.generateTransactionRef(10))
+                .amount(feesAmount)
+                .transactionType(TransactionType.TRANSFER)
+                .transactionStatus(TransactionStatus.SUCCESS)
+                .build();
+
+        transactionRepository.saveAndFlush(transaction);
+
+        try {
+
+            AccountDTO accountDTO = findByAccountNumberAndCheckBalance(
+                    request.accountNumber(),
+                    feesAmount
+            );
+
+            SuccessResponse findToAccountResponse = accountClient.findByAccountNumber(request.toAccountNumber());
+            if (findToAccountResponse.getCode() != HttpStatus.OK.value())
+                throw new BusinessException("Account not found");
+
+            AccountDTO toAccountDTO = objectMapper.convertValue(findToAccountResponse.getData(), AccountDTO.class);
+            SuccessResponse debitAccountResponse = accountClient.debitAccount(
+                    new AccountTransactionRequest(
+                            accountDTO.getAccountId(),
+                            feesAmount
+                    )
+            );
+
+            if (debitAccountResponse.getCode() != HttpStatus.OK.value())
+                throw new BusinessException("Account not debited");
+
+            SuccessResponse creditAccountResponse = accountClient.creditAccount(
+                    new AccountTransactionRequest(
+                            toAccountDTO.getAccountId(),
+                            feesAmount
+                    )
+            );
+
+            if (creditAccountResponse.getCode() != HttpStatus.OK.value())
+                throw new BusinessException("Account not credited");
+
+            return transactionMapper.toDTO(transaction);
+        } catch (BusinessException e) {
+
+            transaction.setTransactionStatus(TransactionStatus.FAILED);
+            transactionRepository.save(transaction);
+
+            // TODO: Produce TransactionSuccessEvent()
+            throw new BusinessException(e.getMessage());
+
+        } catch (InsufficientBalanceException e) {
+
+            transaction.setTransactionStatus(TransactionStatus.FAILED);
+            transactionRepository.save(transaction);
+
+            // TODO: Produce TransactionFailedEvent()
+            throw new InsufficientBalanceException(e.getMessage());
+
+        }
     }
 
     @Transactional(dontRollbackOn = {BusinessException.class, InsufficientBalanceException.class})
@@ -61,18 +122,10 @@ public class TransactionService {
         transactionRepository.saveAndFlush(transaction);
 
         try {
-            SuccessResponse findAccountResponse = accountClient.findByAccountNumber(request.accountNumber());
-            if (findAccountResponse.getCode() != HttpStatus.OK.value())
-                throw new BusinessException("Account not found");
-
-            AccountDTO accountDTO = objectMapper.convertValue(findAccountResponse.getData(), AccountDTO.class);
-            if (accountDTO.getBalance().compareTo(request.amount()) < 0)
-                throw new InsufficientBalanceException(
-                        String.format(
-                                "Insufficient balance for debit transaction %.2f",
-                                request.amount().setScale(2, RoundingMode.HALF_UP)
-                        )
-                );
+            AccountDTO accountDTO = findByAccountNumberAndCheckBalance(
+                    request.accountNumber(),
+                    feesAmount
+            );
 
             SuccessResponse successResponse = accountClient.debitAccount(
                     new AccountTransactionRequest(
@@ -83,6 +136,7 @@ public class TransactionService {
 
             if (successResponse.getCode() != HttpStatus.OK.value())
                 throw new BusinessException("Account not debited");
+
 
             // TODO: Produce TransactionDebitSuccessEvent()
             return transactionMapper.toDTO(transaction);
@@ -156,6 +210,31 @@ public class TransactionService {
 
         }
     }
+
+    /**
+     * Find an account and check if it'd have amount.
+     *
+     * @param accountNumber
+     * @param amount
+     * @return Object AccountDTO.
+     */
+    private AccountDTO findByAccountNumberAndCheckBalance(String accountNumber, BigDecimal amount) {
+        SuccessResponse findAccountResponse = accountClient.findByAccountNumber(accountNumber);
+        if (findAccountResponse.getCode() != HttpStatus.OK.value())
+            throw new BusinessException("Account not found");
+
+        AccountDTO accountDTO = objectMapper.convertValue(findAccountResponse.getData(), AccountDTO.class);
+        if (accountDTO.getBalance().compareTo(amount) < 0)
+            throw new InsufficientBalanceException(
+                    String.format(
+                            "Insufficient balance for debit transaction %.2f",
+                            amount.setScale(2, RoundingMode.HALF_UP)
+                    )
+            );
+
+        return accountDTO;
+    }
+
 
 
     /**
